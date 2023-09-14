@@ -7,6 +7,13 @@
 #include "faker-cxx/Helper.h"
 #include "faker-cxx/Number.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#include <fmt/chrono.h>
+#else
+#include <format>
+#endif
+
 namespace faker
 {
 namespace
@@ -17,14 +24,22 @@ std::string betweenDate(
 {
     if (from > to)
     {
+#ifdef FAKER_USE_FMT
+        throw std::runtime_error{fmt::format("Start date is greater than end date. {{from: {}, to: {}}}", from, to)};
+#else
         throw std::runtime_error{std::format("Start date is greater than end date. {{from: {}, to: {}}}", from, to)};
+#endif
     }
 
     const auto size = std::chrono::duration_cast<std::chrono::seconds>(to - from).count();
 
     const auto randomDateWithinRange = from + std::chrono::seconds{Number::integer(size - 1)};
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{:%FT%TZ}", std::chrono::floor<std::chrono::seconds>(randomDateWithinRange));
+#else
     return std::format("{:%FT%TZ}", std::chrono::floor<std::chrono::seconds>(randomDateWithinRange));
+#endif
 }
 
 const auto numberOfHoursInDay = 24;

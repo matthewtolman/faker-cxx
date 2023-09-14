@@ -1,6 +1,10 @@
 #include "faker-cxx/Person.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 #include <map>
 
 #include "data/english/EnglishFirstNamesFemales.h"
@@ -120,7 +124,11 @@ std::string Person::lastName(Language language, std::optional<Sex> sex)
 
 std::string Person::fullName(Language language, std::optional<Sex> sex)
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{} {}", firstName(language, sex), lastName(language, sex));
+#else
     return std::format("{} {}", firstName(language, sex), lastName(language, sex));
+#endif
 }
 
 std::string Person::sex()
@@ -135,7 +143,11 @@ std::string Person::gender()
 
 std::string Person::jobTitle()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{} {} {}", jobDescriptor(), jobArea(), jobType());
+#else
     return std::format("{} {} {}", jobDescriptor(), jobArea(), jobType());
+#endif
 }
 
 std::string Person::jobDescriptor()

@@ -1,6 +1,10 @@
 #include "faker-cxx/Commerce.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 
 #include "data/Commerce.h"
 #include "faker-cxx/Finance.h"
@@ -41,6 +45,10 @@ std::string Commerce::productName()
 
 std::string Commerce::productFullName()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{} {} {}", productAdjective(), productMaterial(), productName());
+#else
     return std::format("{} {} {}", productAdjective(), productMaterial(), productName());
+#endif
 }
 }

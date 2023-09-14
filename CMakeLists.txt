@@ -7,11 +7,21 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 option(BUILD_FAKER_TESTS DEFAULT ON)
+option(FAKER_USE_FMT_LIBRARY "If on, will use the fmt library instead of std::format (currently needed for Apple Clang)" OFF)
 
 if (MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++20 /permissive-")
 else ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wconversion -Wformat -Werror")
+endif ()
+
+if (FAKER_USE_FMT_LIBRARY)
+    include(FetchContent)
+    FetchContent_Declare(fmt
+            GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+            GIT_TAG 10.1.1
+            FIND_PACKAGE_ARGS NAMES fmt)
+    FetchContent_MakeAvailable(fmt)
 endif ()
 
 set(LIBRARY_NAME faker-cxx)
@@ -76,6 +86,11 @@ target_include_directories(${LIBRARY_NAME}
         PRIVATE
         "${CMAKE_CURRENT_LIST_DIR}/include"
         )
+
+if (FAKER_USE_FMT_LIBRARY)
+    target_link_libraries(${LIBRARY_NAME} PUBLIC fmt::fmt)
+    target_compile_definitions(${LIBRARY_NAME} PUBLIC -DFAKER_USE_FMT=1)
+endif ()
 
 if (BUILD_FAKER_TESTS)
     add_subdirectory(externals/googletest)

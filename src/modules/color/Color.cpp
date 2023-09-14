@@ -1,6 +1,10 @@
 #include "faker-cxx/Color.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 #include <sstream>
 
 #include "data/Colors.h"
@@ -23,7 +27,11 @@ std::string Color::rgb(bool includeAlpha)
 
     if (!includeAlpha)
     {
+#ifdef FAKER_USE_FMT
+        return fmt::format("rgb({}, {}, {})", red, green, blue);
+#else
         return std::format("rgb({}, {}, {})", red, green, blue);
+#endif
     }
 
     const std::floating_point auto alpha = Number::decimal<double>(1);
@@ -34,7 +42,11 @@ std::string Color::rgb(bool includeAlpha)
     ss << alpha;
     const auto formattedAlpha = ss.str();
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("rgba({}, {}, {}, {})", red, green, blue, formattedAlpha);
+#else
     return std::format("rgba({}, {}, {}, {})", red, green, blue, formattedAlpha);
+#endif
 }
 
 std::string Color::hex(HexCasing casing, HexPrefix prefix, bool includeAlpha)

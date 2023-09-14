@@ -182,9 +182,46 @@ TEST_P(FinanceTest, CheckIbanGenerator)
     ASSERT_THAT(Finance::iban(ibanCountry), MatchesRegexCpp(expectedRegex.at(ibanCountry)));
 }
 
+#if __cpp_lib_ranges >= 202110L
 INSTANTIATE_TEST_SUITE_P(TestIbanGenerator, FinanceTest,
                          ValuesIn(std::views::keys(expectedRegex).begin(), std::views::keys(expectedRegex).end()),
                          [](const TestParamInfo<IbanCountry>& info) { return generatedTestName.at(info.param); });
+#else
+static ::testing::internal::ParamGenerator<FinanceTest::ParamType> gtest_TestIbanGeneratorFinanceTest_EvalGenerator_()
+{
+    std::vector<IbanCountry> keys{};
+    keys.resize(expectedRegex.size());
+    std::transform(expectedRegex.begin(), expectedRegex.end(), keys.begin(), [](const auto& pair) {
+                       return pair.first;
+    });
+    return ValuesIn(keys.begin(), keys.end());
+}
+static ::std::string
+gtest_TestIbanGeneratorFinanceTest_EvalGenerateName_(const ::testing::TestParamInfo<FinanceTest::ParamType>& info)
+{
+    std::vector<IbanCountry> keys{};
+    keys.resize(expectedRegex.size());
+    std::transform(expectedRegex.begin(), expectedRegex.end(), keys.begin(), [](const auto& pair) {
+                       return pair.first;
+                   });
+    if (::testing::internal::AlwaysFalse())
+    {
+        ::testing::internal::TestNotEmpty([](const TestParamInfo<IbanCountry>& info)
+                                          { return generatedTestName.at(info.param); });
+        auto t =
+            std::make_tuple(ValuesIn(keys.begin(), keys.end()),
+                            [](const TestParamInfo<IbanCountry>& info) { return generatedTestName.at(info.param); });
+        static_assert(std::tuple_size<decltype(t)>::value <= 2, "Too Many Args!");
+    }
+    return (([](const TestParamInfo<IbanCountry>& info) { return generatedTestName.at(info.param); }))(info);
+}
+static int gtest_TestIbanGeneratorFinanceTest_dummy_ __attribute__((unused)) =
+    ::testing::UnitTest::GetInstance()
+        ->parameterized_test_registry()
+        .GetTestSuitePatternHolder<FinanceTest>("FinanceTest", ::testing::internal::CodeLocation("_file_name_", 187))
+        ->AddTestSuiteInstantiation("TestIbanGenerator", &gtest_TestIbanGeneratorFinanceTest_EvalGenerator_,
+                                    &gtest_TestIbanGeneratorFinanceTest_EvalGenerateName_, "_file_name_", 187);
+#endif
 
 TEST_F(FinanceTest, shouldGenerateAmountWithSymbol)
 {

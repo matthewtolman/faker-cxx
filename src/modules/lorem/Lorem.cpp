@@ -1,6 +1,10 @@
 #include "faker-cxx/Lorem.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 
 #include "../../common/StringHelper.h"
 #include "data/LoremWords.h"
@@ -31,7 +35,11 @@ std::string Lorem::sentence(unsigned minNumberOfWords, unsigned maxNumberOfWords
 
     const auto sentenceWords = words(numberOfWords);
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}{}.", static_cast<char>(std::toupper(sentenceWords[0])), sentenceWords.substr(1));
+#else
     return std::format("{}{}.", static_cast<char>(std::toupper(sentenceWords[0])), sentenceWords.substr(1));
+#endif
 }
 
 std::string Lorem::sentences(unsigned minNumberOfSentences, unsigned maxNumberOfSentences)

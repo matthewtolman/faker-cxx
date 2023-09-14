@@ -1,6 +1,10 @@
 #include "faker-cxx/Internet.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 #include <map>
 #include <utility>
 
@@ -59,16 +63,31 @@ std::string Internet::username(std::optional<std::string> firstNameInit, std::op
     switch (Number::integer<int>(2))
     {
     case 0:
+#ifdef FAKER_USE_FMT
+        username = fmt::format("{}{}{}", firstName, lastName, Number::integer<int>(999));
+#else
         username = std::format("{}{}{}", firstName, lastName, Number::integer<int>(999));
+#endif
         break;
     case 1:
+#ifdef FAKER_USE_FMT
+        username = fmt::format("{}{}{}", firstName,
+                               Helper::arrayElement<std::string>(std::vector<std::string>{".", "_", ""}), lastName);
+#else
         username = std::format("{}{}{}", firstName,
                                Helper::arrayElement<std::string>(std::vector<std::string>{".", "_", ""}), lastName);
+#endif
         break;
     case 2:
+#ifdef FAKER_USE_FMT
+        username = fmt::format("{}{}{}{}", firstName,
+                               Helper::arrayElement<std::string>(std::vector<std::string>{".", "_", ""}), lastName,
+                               Number::integer<int>(99));
+#else
         username = std::format("{}{}{}{}", firstName,
                                Helper::arrayElement<std::string>(std::vector<std::string>{".", "_", ""}), lastName,
                                Number::integer<int>(99));
+#endif
         break;
     }
 
@@ -78,14 +97,24 @@ std::string Internet::username(std::optional<std::string> firstNameInit, std::op
 std::string Internet::email(std::optional<std::string> firstName, std::optional<std::string> lastName,
                             std::optional<std::string> emailHost)
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}@{}", username(std::move(firstName), std::move(lastName)),
+                       emailHost ? *emailHost : Helper::arrayElement<std::string>(emailHosts));
+#else
     return std::format("{}@{}", username(std::move(firstName), std::move(lastName)),
                        emailHost ? *emailHost : Helper::arrayElement<std::string>(emailHosts));
+#endif
 }
 
 std::string Internet::exampleEmail(std::optional<std::string> firstName, std::optional<std::string> lastName)
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}@{}", username(std::move(firstName), std::move(lastName)),
+                       Helper::arrayElement<std::string>(emailExampleHosts));
+#else
     return std::format("{}@{}", username(std::move(firstName), std::move(lastName)),
                        Helper::arrayElement<std::string>(emailExampleHosts));
+#endif
 }
 
 std::string Internet::password(int length)
@@ -104,12 +133,20 @@ std::string Internet::password(int length)
 
 std::string Internet::imageUrl(unsigned int width, unsigned int height)
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("https://source.unsplash.com/{}x{}", width, height);
+#else
     return std::format("https://source.unsplash.com/{}x{}", width, height);
+#endif
 }
 
 std::string Internet::githubAvatarUrl()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("https://avatars.githubusercontent.com/u/{}", Number::integer<int>(100000000));
+#else
     return std::format("https://avatars.githubusercontent.com/u/{}", Number::integer<int>(100000000));
+#endif
 }
 
 std::string Internet::emoji(std::optional<EmojiType> type)
@@ -195,7 +232,11 @@ std::string Internet::ipv4(IPv4Class ipv4class)
     }
     }
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}.{}.{}.{}", sectors[0], sectors[1], sectors[2], sectors[3]);
+#else
     return std::format("{}.{}.{}.{}", sectors[0], sectors[1], sectors[2], sectors[3]);
+#endif
 }
 
 std::string Internet::ipv4(const IPv4Address& baseIpv4Address, const IPv4Address& generationMask)
@@ -208,7 +249,11 @@ std::string Internet::ipv4(const IPv4Address& baseIpv4Address, const IPv4Address
         sectors[i] |= (baseIpv4Address[i] & generationMask[i]);
     }
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}.{}.{}.{}", sectors[0], sectors[1], sectors[2], sectors[3]);
+#else
     return std::format("{}.{}.{}.{}", sectors[0], sectors[1], sectors[2], sectors[3]);
+#endif
 }
 
 std::string Internet::ipv6()
@@ -254,17 +299,29 @@ std::string Internet::url(WebProtocol webProtocol)
 {
     const auto protocol = webProtocol == WebProtocol::Https ? "https" : "http";
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}://{}", protocol, domainName());
+#else
     return std::format("{}://{}", protocol, domainName());
+#endif
 }
 
 std::string Internet::domainName()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}.{}", domainWord(), domainSuffix());
+#else
     return std::format("{}.{}", domainWord(), domainSuffix());
+#endif
 }
 
 std::string Internet::domainWord()
 {
+#ifdef FAKER_USE_FMT
+    return StringHelper::toLower(fmt::format("{}-{}", Word::adjective(), Word::noun()));
+#else
     return StringHelper::toLower(std::format("{}-{}", Word::adjective(), Word::noun()));
+#endif
 }
 
 std::string Internet::domainSuffix()

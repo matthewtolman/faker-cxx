@@ -1,0 +1,63 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "cxx-root",
+      "hidden": true,
+      "displayName": "cxx base",
+      "description": "Base for cxx builds",
+      "generator": "Ninja"
+    },
+    {
+      "inherits": "cxx-root",
+      "binaryDir": "${sourceDir}/build/debug/basic",
+      "name": "debug",
+      "displayName": "Debug Standard Only",
+      "description": "Debug build using only the standard library",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "inherits": "cxx-root",
+      "binaryDir": "${sourceDir}/build/debug/basic",
+      "name": "debug-fmt",
+      "displayName": "Debug with fmt library",
+      "description": "Debug build using the fmt library",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "FAKER_USE_FMT_LIBRARY": "On"
+      }
+    },
+    {
+      "inherits": "cxx-root",
+      "binaryDir": "${sourceDir}/build/debug/basic",
+      "name": "release",
+      "displayName": "Release Standard Only",
+      "description": "Release build using only the standard library",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "inherits": "cxx-root",
+      "binaryDir": "${sourceDir}/build/debug/basic",
+      "name": "debug-fmt",
+      "displayName": "Release with fmt library",
+      "description": "Release build using the fmt library",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "FAKER_USE_FMT_LIBRARY": "On"
+      }
+    }
+  ]
+}

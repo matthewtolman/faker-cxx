@@ -1,6 +1,10 @@
 #include "faker-cxx/Company.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 
 #include "data/BuzzAdjectives.h"
 #include "data/BuzzNouns.h"
@@ -23,17 +27,34 @@ std::string Company::name()
     switch (Number::integer<int>(3))
     {
     case 0:
+#ifdef FAKER_USE_FMT
+        companyName = fmt::format("{} {}", Person::lastName(), Helper::arrayElement<std::string>(companySuffixes));
+#else
         companyName = std::format("{} {}", Person::lastName(), Helper::arrayElement<std::string>(companySuffixes));
+#endif
         break;
     case 1:
+#ifdef FAKER_USE_FMT
+        companyName = fmt::format("{} {} {}", Person::firstName(), Person::lastName(), Person::jobArea());
+#else
         companyName = std::format("{} {} {}", Person::firstName(), Person::lastName(), Person::jobArea());
+#endif
         break;
     case 2:
+#ifdef FAKER_USE_FMT
+        companyName = fmt::format("{} {} {} Services", Person::firstName(), Person::lastName(), Person::jobArea());
+#else
         companyName = std::format("{} {} {} Services", Person::firstName(), Person::lastName(), Person::jobArea());
+#endif
         break;
     case 3:
+#ifdef FAKER_USE_FMT
+        companyName = fmt::format("{} {} {} {}", Person::firstName(), Person::lastName(), Person::jobArea(),
+                                  Helper::arrayElement<std::string>(companySuffixes));
+#else
         companyName = std::format("{} {} {} {}", Person::firstName(), Person::lastName(), Person::jobArea(),
                                   Helper::arrayElement<std::string>(companySuffixes));
+#endif
         break;
     }
 
@@ -52,7 +73,11 @@ std::string Company::industry()
 
 std::string Company::buzzPhrase()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{} {} {}", buzzVerb(), buzzAdjective(), buzzNoun());
+#else
     return std::format("{} {} {}", buzzVerb(), buzzAdjective(), buzzNoun());
+#endif
 }
 
 std::string Company::buzzAdjective()
@@ -72,7 +97,11 @@ std::string Company::buzzVerb()
 
 std::string Company::catchPhrase()
 {
+#ifdef FAKER_USE_FMT
+    return fmt::format("{} {} {}", catchPhraseAdjective(), catchPhraseDescriptor(), catchPhraseNoun());
+#else
     return std::format("{} {} {}", catchPhraseAdjective(), catchPhraseDescriptor(), catchPhraseNoun());
+#endif
 }
 
 std::string Company::catchPhraseAdjective()

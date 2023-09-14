@@ -1,6 +1,10 @@
 #include "faker-cxx/Finance.h"
 
+#ifdef FAKER_USE_FMT
+#include <fmt/format.h>
+#else
 #include <format>
+#endif
 
 #include "../../common/mappers/PrecisionMapper.h"
 #include "data/AccountTypes.h"
@@ -64,7 +68,11 @@ std::string Finance::amount(double min, double max, Precision precision, const s
 
     ss << generatedNumber;
 
+#ifdef FAKER_USE_FMT
+    return fmt::format("{}{}", symbol, ss.str());
+#else
     return std::format("{}{}", symbol, ss.str());
+#endif
 }
 
 std::string Finance::iban(std::optional<IbanCountry> country)
